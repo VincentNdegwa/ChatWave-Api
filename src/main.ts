@@ -12,7 +12,7 @@ async function bootstrap() {
   });
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
-  const port = process.env.PORT || 10000;
+  const port = 3000;
 
   await app.listen(port);
 }

@@ -5,6 +5,7 @@ import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { createUserParams } from 'src/type';
 import { JwtService } from '@nestjs/jwt';
+import { phoneAuthenticateDto } from './dto/phone-authenticate.dto';
 
 @Injectable()
 export class AuthService {
@@ -46,6 +47,21 @@ export class AuthService {
   }
   catch(error) {
     return { error: true, message: error.message, data: null };
+  }
+
+  async authenticateNumber(phoneAuthenticateDto: phoneAuthenticateDto) {
+    const user = await this.userRepository.findOne({
+      where: { phone_number: phoneAuthenticateDto.phone },
+    });
+    if (user) {
+      return { error: false, message: 'Phone number exists', data: null };
+    } else {
+      return {
+        error: true,
+        message: 'Phone number does not exist',
+        data: user,
+      };
+    }
   }
 
   async logoutUser() {
