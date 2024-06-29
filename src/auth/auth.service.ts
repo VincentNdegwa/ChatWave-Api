@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
@@ -25,28 +25,36 @@ export class AuthService {
     return bcrypt.compare(password, hashString);
   }
   async loginUser(userDetails: createUserParams) {
-    const user = await this.userRepository.findOne({
-      where: { phone_number: userDetails.phone_number },
-    });
-    if (user) {
+    try {
+      const user = await this.userRepository.findOne({
+        where: { phone_number: userDetails.phone_number },
+      });
+      if (!user) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
+
       const isMatch = await this.ComparePassword(
         userDetails.password,
         user.password,
       );
-      if (isMatch) {
-        const payload = { sub: user.id, phone_number: user.phone_number };
-        return {
-          accessToken: await this.jwtService.signAsync(payload),
-        };
-      } else {
-        throw new UnauthorizedException();
+      if (!isMatch) {
+        throw new HttpException(
+          "Password didn't match",
+          HttpStatus.UNAUTHORIZED,
+        );
       }
-    } else {
-      throw new UnauthorizedException();
+
+      const payload = { sub: user.id, phone_number: user.phone_number };
+      return {
+        accessToken: await this.jwtService.signAsync(payload),
+        userId: user.id,
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  }
-  catch(error) {
-    return { error: true, message: error.message, data: null };
   }
 
   async authenticateNumber(phoneAuthenticateDto: phoneAuthenticateDto) {
