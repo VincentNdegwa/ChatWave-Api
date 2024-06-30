@@ -5,11 +5,17 @@ import { Chat } from './entities/chat.entity';
 import { DataSource, Repository } from 'typeorm';
 import { createChatParams, createParticipantParams } from 'src/type';
 import { ParticipantsService } from 'src/participants/participants.service';
+import { Participant } from 'src/participants/entities/participant.entity';
+import { Message } from 'src/messages/entities/message.entity';
+import { ExtendedChat } from './chatInterface';
 
 @Injectable()
 export class ChatsService {
   constructor(
     @InjectRepository(Chat) private chatRepository: Repository<Chat>,
+    @InjectRepository(Message) private messageRepository: Repository<Message>,
+    @InjectRepository(Participant)
+    private participantRepository: Repository<Participant>,
     private participantService: ParticipantsService,
     private dataSource: DataSource,
   ) {}
@@ -112,5 +118,54 @@ export class ChatsService {
 
   remove(id: number) {
     return `This action removes a #${id} chat`;
+  }
+
+  async getUserChats(user_id: number) {
+    try {
+      const participants = await this.participantRepository.find({
+        where: { user: { id: user_id } },
+        relations: [
+          'chat',
+          'chat.participants',
+          'chat.participants.user',
+          'chat.participants.user.profile',
+        ],
+      });
+
+      await Promise.all(
+        participants.map(async (participant) => {
+          const chatId = participant.chat.id;
+
+          const latestMessage = await this.messageRepository.findOne({
+            where: { chat: { id: chatId } },
+            order: { sent_at: 'DESC' },
+          });
+
+          participant.chat['lastMessage'] = latestMessage;
+
+          participants.sort((a, b) => {
+            const hasMessageA = !!(a.chat as ExtendedChat).lastMessage;
+            const hasMessageB = !!(b.chat as ExtendedChat).lastMessage;
+
+            if (hasMessageA && hasMessageB) {
+              return (
+                (b.chat as ExtendedChat).lastMessage.sent_at.getTime() -
+                (a.chat as ExtendedChat).lastMessage.sent_at.getTime()
+              );
+            } else if (hasMessageA) {
+              return -1;
+            } else if (hasMessageB) {
+              return 1;
+            } else {
+              return b.chat.created_at.getTime() - a.chat.created_at.getTime();
+            }
+          });
+        }),
+      );
+
+      return { error: false, message: 'Chats retrived', data: participants };
+    } catch (error) {
+      return { error: true, message: error.message, data: null };
+    }
   }
 }

@@ -14,5 +14,6 @@ import { UsersService } from 'src/users/users.service';
   imports: [TypeOrmModule.forFeature([Message, Chat, Participant, User])],
   controllers: [MessagesController],
   providers: [MessagesService, ChatsService, ParticipantsService, UsersService],
+  exports: [MessagesService],
 })
 export class MessagesModule {}

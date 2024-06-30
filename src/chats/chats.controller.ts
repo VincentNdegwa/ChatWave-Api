@@ -6,11 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { ChatsService } from './chats.service';
 import { UpdateChatDto } from './dto/update-chat.dto';
 import { CreateChatDto } from './dto/create-chat.dto';
-
+import { AuthGuard } from 'src/auth/auth.guard';
+@UseGuards(AuthGuard)
 @Controller('chats')
 export class ChatsController {
   constructor(private readonly chatsService: ChatsService) {}
@@ -18,6 +20,12 @@ export class ChatsController {
   @Post('create')
   async create(@Body() createChatDto: CreateChatDto) {
     const response = await this.chatsService.create(createChatDto);
+    return response;
+  }
+
+  @Get('user/:userId')
+  async getUserChats(@Param('userId') userId: string) {
+    const response = await this.chatsService.getUserChats(+userId);
     return response;
   }
 
