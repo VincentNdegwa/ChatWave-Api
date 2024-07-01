@@ -129,6 +129,9 @@ export class ChatsService {
           'chat.participants',
           'chat.participants.user',
           'chat.participants.user.profile',
+          'chat.messages',
+          'chat.messages.sender',
+          'chat.messages.sender.profile',
         ],
       });
 
