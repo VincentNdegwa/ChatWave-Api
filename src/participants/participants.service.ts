@@ -3,7 +3,7 @@ import { UpdateParticipantDto } from './dto/update-participant.dto';
 import { Role, createParticipantParams } from 'src/type';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Participant } from './entities/participant.entity';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, In, Repository } from 'typeorm';
 import { chatAndUserDto } from './dto/chat-and-user.dto';
 
 @Injectable()
@@ -17,6 +17,23 @@ export class ParticipantsService {
     manager: EntityManager,
   ) {
     try {
+      const userIds = [
+        createParticipantParams.userId.user_id,
+        createParticipantParams.userId.added_user_id,
+      ];
+      const chatId = createParticipantParams.conversationId;
+      const existPart = await this.participantRepository.find({
+        where: { user: { id: In(userIds) }, chat: { id: chatId } },
+      });
+
+      if (existPart.length === userIds.length) {
+        return {
+          error: true,
+          message: 'User exist in the chat',
+          data: null,
+        };
+      }
+
       const participants = [];
 
       const userParticipant = this.participantRepository.create({
