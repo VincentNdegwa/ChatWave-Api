@@ -28,6 +28,7 @@ export class AuthService {
     try {
       const user = await this.userRepository.findOne({
         where: { phone_number: userDetails.phone_number },
+        relations: ['profile'],
       });
       if (!user) {
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
@@ -48,6 +49,7 @@ export class AuthService {
       return {
         accessToken: await this.jwtService.signAsync(payload),
         userId: user.id,
+        user: user,
       };
     } catch (error) {
       if (error instanceof HttpException) {
