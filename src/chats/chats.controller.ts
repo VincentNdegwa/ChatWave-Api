@@ -28,6 +28,17 @@ export class ChatsController {
     const response = await this.chatsService.getUserChats(+userId);
     return response;
   }
+  @Get('user/:userId/:chatId')
+  async getUserChatsMessages(
+    @Param('userId') userId: string,
+    @Param('chatId') chatId: string,
+  ) {
+    const response = await this.chatsService.getUserChatsMessages(
+      +userId,
+      +chatId,
+    );
+    return response;
+  }
 
   @Get('single/:id')
   async getChatOnly(@Param('id') id: string) {

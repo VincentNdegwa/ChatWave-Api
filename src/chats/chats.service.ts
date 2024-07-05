@@ -119,6 +119,25 @@ export class ChatsService {
   remove(id: number) {
     return `This action removes a #${id} chat`;
   }
+  async getUserChatsMessages(user_id: number, chat_id: number) {
+    try {
+      const participant = await this.participantRepository.findOne({
+        where: { chat: { id: chat_id }, user: { id: user_id } },
+        relations: [
+          'chat',
+          'chat.participants',
+          'chat.participants.user',
+          'chat.participants.user.profile',
+          'chat.messages',
+          'chat.messages.sender',
+          'chat.messages.sender.profile',
+        ],
+      });
+      return { error: false, message: 'chat retrieved', data: participant };
+    } catch (error) {
+      return { error: true, message: 'error', data: error };
+    }
+  }
 
   async getUserChats(user_id: number) {
     try {
