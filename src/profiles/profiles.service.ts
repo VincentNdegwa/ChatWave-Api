@@ -66,15 +66,15 @@ export class ProfilesService {
       return { error: true, message: 'User not found' };
     }
     if (!user.profile) {
-      return { error: true, message: 'User does not have a profile' };
+      const userProfile = this.create(updateProfileParams);
+      return userProfile;
     }
     const profile = user.profile;
     await this.profileRepository.update(profile.id, {
       ...otherData,
       updated_at: new Date(),
     });
-    const updateUser = await this.userService.findOne(user_id);
-
-    return { error: false, message: 'Profile found', data: updateUser.data };
+    const updateUser = await this.findOne(user_id);
+    return updateUser;
   }
 }
