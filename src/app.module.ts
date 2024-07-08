@@ -16,6 +16,8 @@ import { Chat } from './chats/entities/chat.entity';
 import { ParticipantsModule } from './participants/participants.module';
 import { Message } from './messages/entities/message.entity';
 import { Participant } from './participants/entities/participant.entity';
+import { InvalidatedTokensModule } from './invalidated-tokens/invalidated-tokens.module';
+import { InvalidatedTokensModule } from './invalidated-tokens/invalidated-tokens.module';
 
 @Module({
   imports: [
@@ -37,6 +39,7 @@ import { Participant } from './participants/entities/participant.entity';
     ChatsModule,
     MessagesModule,
     ParticipantsModule,
+    InvalidatedTokensModule,
   ],
   controllers: [AppController],
   providers: [AppService, ProfilesService],

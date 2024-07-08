@@ -74,7 +74,9 @@ export class AuthService {
     }
   }
 
-  async logoutUser() {
+  async logoutUser(token: string) {
+    console.log(token);
+
     return `This action returns all auth`;
   }
 }

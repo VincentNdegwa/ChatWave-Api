@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { AuthGuard } from './auth.guard';
@@ -20,7 +20,8 @@ export class AuthController {
   }
   @UseGuards(AuthGuard)
   @Post('/logout')
-  logoutUser() {
-    return this.authService.logoutUser();
+  logoutUser(@Req() req) {
+    const token = req.headers.authorization.split('')[1];
+    return this.authService.logoutUser(token);
   }
 }
