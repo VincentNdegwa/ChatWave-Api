@@ -9,11 +9,27 @@ import { Participant } from 'src/participants/entities/participant.entity';
 import { ParticipantsService } from 'src/participants/participants.service';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
+import { InvalidatedTokensService } from 'src/invalidated-tokens/invalidated-tokens.service';
+import { InvalidatedToken } from 'src/invalidated-tokens/entities/invalidated-token.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Message, Chat, Participant, User])],
+  imports: [
+    TypeOrmModule.forFeature([
+      Message,
+      Chat,
+      Participant,
+      User,
+      InvalidatedToken,
+    ]),
+  ],
   controllers: [MessagesController],
-  providers: [MessagesService, ChatsService, ParticipantsService, UsersService],
+  providers: [
+    MessagesService,
+    ChatsService,
+    ParticipantsService,
+    UsersService,
+    InvalidatedTokensService,
+  ],
   exports: [MessagesService],
 })
 export class MessagesModule {}
