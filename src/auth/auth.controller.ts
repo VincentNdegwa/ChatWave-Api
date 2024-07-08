@@ -1,4 +1,11 @@
-import { Controller, Post, Body, UseGuards, Req } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  Req,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { AuthGuard } from './auth.guard';
@@ -12,7 +19,7 @@ export class AuthController {
   loginUser(@Body() createUserDto: CreateUserDto) {
     return this.authService.loginUser(createUserDto);
   }
-
+  @UseGuards(AuthGuard)
   @Post('/phone-number')
   async authenticateNumber(@Body() phoneAuthDto: phoneAuthenticateDto) {
     const response = await this.authService.authenticateNumber(phoneAuthDto);
@@ -21,7 +28,12 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @Post('/logout')
   logoutUser(@Req() req) {
-    const token = req.headers.authorization.split('')[1];
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      throw new UnauthorizedException();
+    }
+
+    const token = authHeader.split(' ')[1];
     return this.authService.logoutUser(token);
   }
 }

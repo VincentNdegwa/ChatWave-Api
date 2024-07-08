@@ -12,14 +12,11 @@ export class InvalidatedTokensService {
   ) {}
   async create(createInvalidatedTokenDto: CreateInvalidatedTokenDto) {
     try {
-      const invalidatedToken = await this.invalidatedTokenRepository.create(
+      const invalidatedToken = this.invalidatedTokenRepository.create(
         createInvalidatedTokenDto,
       );
-      if (invalidatedToken) {
-        return { error: false, message: 'User logged out', data: null };
-      } else {
-        return { error: true, message: 'Failed to logout', data: null };
-      }
+      await this.invalidatedTokenRepository.save(invalidatedToken);
+      return { error: false, message: 'User logged out', data: null };
     } catch (error) {
       return { error: true, message: error.message, data: null };
     }

@@ -7,14 +7,17 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { ParticipantsService } from './participants.service';
 import { UpdateParticipantDto } from './dto/update-participant.dto';
 import { createParticipantParams } from 'src/type';
 import { EntityManager } from 'typeorm';
 import { chatAndUserDto } from './dto/chat-and-user.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('participants')
+@UseGuards(AuthGuard)
 export class ParticipantsController {
   constructor(
     private readonly participantsService: ParticipantsService,

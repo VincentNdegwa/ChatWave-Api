@@ -17,6 +17,7 @@ import { ParticipantsModule } from './participants/participants.module';
 import { Message } from './messages/entities/message.entity';
 import { Participant } from './participants/entities/participant.entity';
 import { InvalidatedTokensModule } from './invalidated-tokens/invalidated-tokens.module';
+import { InvalidatedToken } from './invalidated-tokens/entities/invalidated-token.entity';
 
 @Module({
   imports: [
@@ -27,7 +28,15 @@ import { InvalidatedTokensModule } from './invalidated-tokens/invalidated-tokens
       username: 'vincent',
       password: 'Vincent07$',
       database: 'ChatWave',
-      entities: [User, Profile, Verification, Chat, Message, Participant],
+      entities: [
+        User,
+        Profile,
+        Verification,
+        Chat,
+        Message,
+        Participant,
+        InvalidatedToken,
+      ],
       synchronize: true,
       logging: true,
     }),

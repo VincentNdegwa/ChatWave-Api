@@ -4,6 +4,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 export class InvalidatedToken {
   @PrimaryGeneratedColumn()
   id: number;
+
   @Column()
   token: string;
 

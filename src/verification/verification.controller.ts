@@ -1,9 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { VerificationService } from './verification.service';
 import { CreateVerificationDto } from './dto/create-verification.dto';
 import { UpdateVerificationDto } from './dto/update-verification.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('verification')
+@UseGuards(AuthGuard)
 export class VerificationController {
   constructor(private readonly verificationService: VerificationService) {}
 
@@ -23,7 +34,10 @@ export class VerificationController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateVerificationDto: UpdateVerificationDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateVerificationDto: UpdateVerificationDto,
+  ) {
     return this.verificationService.update(+id, updateVerificationDto);
   }
 

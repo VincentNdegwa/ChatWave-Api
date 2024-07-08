@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
@@ -6,12 +11,14 @@ import { Repository } from 'typeorm';
 import { createUserParams } from 'src/type';
 import { JwtService } from '@nestjs/jwt';
 import { phoneAuthenticateDto } from './dto/phone-authenticate.dto';
+import { InvalidatedTokensService } from 'src/invalidated-tokens/invalidated-tokens.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
     private jwtService: JwtService,
+    private invalidateTokenService: InvalidatedTokensService,
   ) {}
   private async HashPasword(password: string): Promise<string> {
     const salt = await bcrypt.genSalt(10);
@@ -76,7 +83,10 @@ export class AuthService {
 
   async logoutUser(token: string) {
     console.log(token);
-
-    return `This action returns all auth`;
+    const { message } = await this.invalidateTokenService.create({
+      token: token,
+      created_at: new Date(),
+    });
+    throw new UnauthorizedException(message);
   }
 }
