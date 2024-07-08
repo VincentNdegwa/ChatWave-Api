@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { InvalidatedTokensService } from './invalidated-tokens.service';
 import { CreateInvalidatedTokenDto } from './dto/create-invalidated-token.dto';
 
@@ -9,22 +9,15 @@ export class InvalidatedTokensController {
   ) {}
 
   @Post()
-  create(@Body() createInvalidatedTokenDto: CreateInvalidatedTokenDto) {
-    return this.invalidatedTokensService.create(createInvalidatedTokenDto);
+  async create(@Body() createInvalidatedTokenDto: CreateInvalidatedTokenDto) {
+    const response = await this.invalidatedTokensService.create(
+      createInvalidatedTokenDto,
+    );
+    return response;
   }
-
-  @Get()
-  findAll() {
-    return this.invalidatedTokensService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.invalidatedTokensService.findOne(+id);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.invalidatedTokensService.remove(+id);
+  @Post()
+  async findOne(token: string) {
+    const response = this.invalidatedTokensService.findOne(token);
+    return response;
   }
 }

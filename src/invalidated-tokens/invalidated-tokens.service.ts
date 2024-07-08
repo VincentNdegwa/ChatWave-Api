@@ -1,26 +1,42 @@
 import { Injectable } from '@nestjs/common';
 import { CreateInvalidatedTokenDto } from './dto/create-invalidated-token.dto';
-import { UpdateInvalidatedTokenDto } from './dto/update-invalidated-token.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { InvalidatedToken } from './entities/invalidated-token.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class InvalidatedTokensService {
-  create(createInvalidatedTokenDto: CreateInvalidatedTokenDto) {
-    return 'This action adds a new invalidatedToken';
+  constructor(
+    @InjectRepository(InvalidatedToken)
+    private invalidatedTokenRepository: Repository<InvalidatedToken>,
+  ) {}
+  async create(createInvalidatedTokenDto: CreateInvalidatedTokenDto) {
+    try {
+      const invalidatedToken = await this.invalidatedTokenRepository.create(
+        createInvalidatedTokenDto,
+      );
+      if (invalidatedToken) {
+        return { error: false, message: 'User logged out', data: null };
+      } else {
+        return { error: true, message: 'Failed to logout', data: null };
+      }
+    } catch (error) {
+      return { error: true, message: error.message, data: null };
+    }
   }
 
-  findAll() {
-    return `This action returns all invalidatedTokens`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} invalidatedToken`;
-  }
-
-  update(id: number, updateInvalidatedTokenDto: UpdateInvalidatedTokenDto) {
-    return `This action updates a #${id} invalidatedToken`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} invalidatedToken`;
+  async findOne(token: string) {
+    try {
+      const expiredToken = await this.invalidatedTokenRepository.findOneBy({
+        token: token,
+      });
+      if (expiredToken) {
+        return false;
+      } else {
+        return true;
+      }
+    } catch (error) {
+      return false;
+    }
   }
 }
