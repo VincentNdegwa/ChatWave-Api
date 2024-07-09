@@ -38,9 +38,9 @@ export class ParticipantsController {
     return response;
   }
 
-  @Get()
-  findAll() {
-    return this.participantsService.findAll();
+  @Get(':id')
+  findAll(@Param() id: string) {
+    return this.participantsService.findAll(+id);
   }
 
   @Get(':id')

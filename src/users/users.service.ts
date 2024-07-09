@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { createUserParams, updateUserParams } from 'src/type';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -100,6 +100,17 @@ export class UsersService {
       }
     } catch (error) {
       return { error: true, message: error.message, data: null };
+    }
+  }
+  async getOtherUsers(id: number) {
+    const users = await this.userRepository.find({
+      where: { id: Not(id) },
+      relations: ['profile'],
+    });
+    if (users) {
+      return { error: false, message: 'Users fetched', data: users };
+    } else {
+      return { error: true, message: 'Users not found', data: null };
     }
   }
 }

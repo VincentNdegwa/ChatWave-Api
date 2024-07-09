@@ -29,6 +29,11 @@ export class UsersController {
     const response = await this.usersService.findAll();
     return response;
   }
+  @Get('/all/:id')
+  async getOtherUsers(@Param('id') id: string) {
+    const response = await this.usersService.getOtherUsers(+id);
+    return response;
+  }
 
   @Get(':id')
   async findOne(@Param('id') id: string) {

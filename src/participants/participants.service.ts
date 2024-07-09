@@ -95,8 +95,8 @@ export class ParticipantsService {
     }
   }
 
-  findAll() {
-    return `This action returns all participants`;
+  findAll(id: number) {
+    return `This action returns all participants ${id}`;
   }
 
   findOne(id: number) {
