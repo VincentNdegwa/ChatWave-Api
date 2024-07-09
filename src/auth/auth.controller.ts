@@ -19,7 +19,6 @@ export class AuthController {
   loginUser(@Body() createUserDto: CreateUserDto) {
     return this.authService.loginUser(createUserDto);
   }
-  @UseGuards(AuthGuard)
   @Post('/phone-number')
   async authenticateNumber(@Body() phoneAuthDto: phoneAuthenticateDto) {
     const response = await this.authService.authenticateNumber(phoneAuthDto);
