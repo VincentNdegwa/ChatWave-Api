@@ -13,8 +13,8 @@ import { CreateMessageDto } from './dto/create-message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 
-@Controller('messages')
 @UseGuards(AuthGuard)
+@Controller('messages')
 export class MessagesController {
   constructor(private readonly messagesService: MessagesService) {}
 
