@@ -28,7 +28,10 @@ export class GatwayService {
       sender_id: message.sender_id,
     };
     const responseMessage = await this.messageService.create(savingMessageData);
-    socket.emit(this.listenMessage, responseMessage);
+    socket
+      .to([message.sender_id.toString(), message.receiver_id.toString()])
+      .emit(this.listenMessage, responseMessage);
+    // socket.emit(this.listenMessage, responseMessage);
   }
 
   @SubscribeMessage('join')
