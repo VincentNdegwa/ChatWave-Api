@@ -13,6 +13,7 @@ import { newMessageDto } from './types/new-message.dto';
 @WebSocketGateway()
 export class GatwayService {
   constructor(private messageService: MessagesService) {}
+  private listenMessage: string = 'onMessage';
   @WebSocketServer()
   server: Server;
 
@@ -27,6 +28,13 @@ export class GatwayService {
       sender_id: message.sender_id,
     };
     const responseMessage = await this.messageService.create(savingMessageData);
-    socket.emit('onMessage', responseMessage);
+    socket.emit(this.listenMessage, responseMessage);
+  }
+
+  @SubscribeMessage('join')
+  onJoin(@MessageBody() userId: number, @ConnectedSocket() socket: Socket) {
+    socket.join(userId.toString());
+    // console.log(socket);
+    // console.log('joined as ' + userId);
   }
 }
