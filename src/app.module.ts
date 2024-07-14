@@ -18,6 +18,7 @@ import { Message } from './messages/entities/message.entity';
 import { Participant } from './participants/entities/participant.entity';
 import { InvalidatedTokensModule } from './invalidated-tokens/invalidated-tokens.module';
 import { InvalidatedToken } from './invalidated-tokens/entities/invalidated-token.entity';
+import { GateWayModule } from './gateway/gateway.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { InvalidatedToken } from './invalidated-tokens/entities/invalidated-toke
     MessagesModule,
     ParticipantsModule,
     InvalidatedTokensModule,
+    GateWayModule,
   ],
   controllers: [AppController],
   providers: [AppService, ProfilesService],
