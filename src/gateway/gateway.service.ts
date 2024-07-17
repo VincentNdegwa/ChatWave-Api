@@ -22,7 +22,7 @@ import { UseGuards } from '@nestjs/common';
     methods: ['GET', 'POST'],
   },
 })
-@UseGuards(AuthGuard)
+// @UseGuards(AuthGuard)
 export class GatewayService
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
