@@ -66,7 +66,7 @@ export class MessagesService {
     try {
       const chats = await this.messageRepository.findOne({
         where: { id },
-        relations: ['sender', 'sender.profile'],
+        relations: ['sender', 'sender.profile', 'chat'],
       });
       if (!chats) {
         return {
@@ -77,7 +77,9 @@ export class MessagesService {
       } else {
         return { error: false, message: 'Message retrieved', data: chats };
       }
-    } catch (error) {}
+    } catch (error) {
+      return { error: true, message: error.message, data: null };
+    }
   }
 
   async update(id: number, updateMessageDto: UpdateMessageDto) {
