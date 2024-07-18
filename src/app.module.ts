@@ -19,16 +19,19 @@ import { Participant } from './participants/entities/participant.entity';
 import { InvalidatedTokensModule } from './invalidated-tokens/invalidated-tokens.module';
 import { InvalidatedToken } from './invalidated-tokens/entities/invalidated-token.entity';
 import { GateWayModule } from './gateway/gateway.module';
+import { ConfigModule } from '@nestjs/config';
 
+import * as dotenv from 'dotenv';
+dotenv.config();
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'vincent',
-      password: 'Vincent07$',
-      database: 'ChatWave',
+      host: process.env.DB_HOST,
+      port: parseInt(process.env.DB_PORT, 10),
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_DATABASE,
       entities: [
         User,
         Profile,
@@ -50,6 +53,9 @@ import { GateWayModule } from './gateway/gateway.module';
     ParticipantsModule,
     InvalidatedTokensModule,
     GateWayModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
   ],
   controllers: [AppController],
   providers: [AppService, ProfilesService],
