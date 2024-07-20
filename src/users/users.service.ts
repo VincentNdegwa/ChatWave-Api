@@ -25,6 +25,13 @@ export class UsersService {
 
   async create(userDetails: createUserParams) {
     try {
+      const existUser = await this.userRepository.findOne({
+        where: { phone_number: userDetails.phone_number },
+      });
+
+      if (existUser) {
+        return { error: true, message: 'Phone number exist!', data: null };
+      }
       const hashedPassword = await this.HashPasword(userDetails.password);
       const newUser = this.userRepository.create({
         ...userDetails,

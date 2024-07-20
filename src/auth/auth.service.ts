@@ -12,6 +12,8 @@ import { createUserParams } from 'src/type';
 import { JwtService } from '@nestjs/jwt';
 import { phoneAuthenticateDto } from './dto/phone-authenticate.dto';
 import { InvalidatedTokensService } from 'src/invalidated-tokens/invalidated-tokens.service';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class AuthService {
@@ -19,6 +21,7 @@ export class AuthService {
     @InjectRepository(User) private userRepository: Repository<User>,
     private jwtService: JwtService,
     private invalidateTokenService: InvalidatedTokensService,
+    private userService: UsersService,
   ) {}
   private async HashPasword(password: string): Promise<string> {
     const salt = await bcrypt.genSalt(10);
@@ -64,6 +67,10 @@ export class AuthService {
       }
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
+  async registerUser(createUserDto: CreateUserDto) {
+    const response = await this.userService.create(createUserDto);
+    return response;
   }
 
   async authenticateNumber(phoneAuthenticateDto: phoneAuthenticateDto) {

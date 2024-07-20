@@ -19,6 +19,10 @@ export class AuthController {
   loginUser(@Body() createUserDto: CreateUserDto) {
     return this.authService.loginUser(createUserDto);
   }
+  @Post('/register')
+  registerUser(@Body() createUserDto: CreateUserDto) {
+    return this.authService.registerUser(createUserDto);
+  }
   @Post('/phone-number')
   async authenticateNumber(@Body() phoneAuthDto: phoneAuthenticateDto) {
     const response = await this.authService.authenticateNumber(phoneAuthDto);
