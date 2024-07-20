@@ -80,7 +80,6 @@ export class GatewayService
       const { receiver_id, sender_id } = payload;
 
       client.to(receiver_id.toString()).emit('call-user', payload);
-      console.log(payload);
     } catch (error) {
       console.error('Error in handleCallUser:', error);
     }
@@ -89,10 +88,10 @@ export class GatewayService
   @SubscribeMessage('answer-call')
   handleAnswerCall(
     @ConnectedSocket() client: Socket,
-    @MessageBody() payload: { to: string; signalData: any },
+    @MessageBody() payload: { to: string; peerId: string },
   ) {
-    client
-      .to(payload.to)
-      .emit('call-accepted', { signalData: payload.signalData });
+    console.log(payload);
+
+    client.to(payload.to).emit('call-accepted', { peerId: payload.peerId });
   }
 }
