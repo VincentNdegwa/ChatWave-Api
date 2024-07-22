@@ -80,6 +80,7 @@ export class GatewayService
       const { receiver_id, sender_id } = payload;
 
       client.to(receiver_id.toString()).emit('call-user', payload);
+      console.log('Calling user ' + payload.receiver_id);
     } catch (error) {
       console.error('Error in handleCallUser:', error);
     }
