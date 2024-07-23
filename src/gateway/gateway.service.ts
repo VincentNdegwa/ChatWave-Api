@@ -28,8 +28,6 @@ export class GatewayService
 {
   @WebSocketServer() server: Server;
 
-  private listenMessage: string = 'messageReceived';
-
   constructor(private messageService: MessagesService) {}
 
   afterInit(server: Server) {
@@ -59,7 +57,8 @@ export class GatewayService
         await this.messageService.create(savingMessageData);
       socket
         .to([message.sender_id.toString(), message.receiver_id.toString()])
-        .emit(this.listenMessage, responseMessage);
+        .emit('messageReceived', responseMessage);
+      console.log(responseMessage);
     } catch (error) {
       console.error('Error sending message:', error);
     }
