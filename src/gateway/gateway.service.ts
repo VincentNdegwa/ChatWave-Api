@@ -66,7 +66,9 @@ export class GatewayService
 
   @SubscribeMessage('join')
   onJoin(@MessageBody() userId: number, @ConnectedSocket() socket: Socket) {
-    socket.join(userId.toString());
+    if (userId) {
+      socket.join(userId.toString());
+    }
     console.log('Joined as ' + userId);
   }
 
