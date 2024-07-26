@@ -51,6 +51,7 @@ export class GatewayService
       text: message.text,
       chat_id: message.chat_id,
       sender_id: message.sender_id,
+      message_id: message.message_id,
     };
     try {
       const responseMessage =

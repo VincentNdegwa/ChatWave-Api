@@ -11,14 +11,17 @@ import { chatAndUserDto } from 'src/participants/dto/chat-and-user.dto';
 
 @Injectable()
 export class MessagesService {
+  private message_id: string;
   constructor(
     @InjectRepository(Message) private messageRepository: Repository<Message>,
     private chatService: ChatsService,
     private userService: UsersService,
     private participantService: ParticipantsService,
   ) {}
+
   async create(createMessageParams: createMessageParams) {
     try {
+      this.message_id = createMessageParams.message_id;
       const chatExistData = await this.chatService.findExactlyOne(
         createMessageParams.chat_id,
       );
@@ -52,7 +55,10 @@ export class MessagesService {
 
       const savedMessage = await this.messageRepository.save(newMessage);
       const retrievedMessage = await this.findOne(savedMessage.id);
-      return retrievedMessage;
+      return {
+        ...retrievedMessage,
+        data: { ...retrievedMessage.data, message_id: this.message_id },
+      };
     } catch (error) {
       return {
         error: true,
@@ -75,7 +81,11 @@ export class MessagesService {
           data: null,
         };
       } else {
-        return { error: false, message: 'Message retrieved', data: chats };
+        return {
+          error: false,
+          message: 'Message retrieved',
+          data: chats,
+        };
       }
     } catch (error) {
       return { error: true, message: error.message, data: null };
