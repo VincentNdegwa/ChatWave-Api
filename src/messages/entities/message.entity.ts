@@ -1,6 +1,7 @@
 import { Chat } from 'src/chats/entities/chat.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { MessageStatus } from '../types';
 
 @Entity({ name: 'messages' })
 export class Message {
@@ -12,6 +13,12 @@ export class Message {
 
   @Column()
   sent_at: Date;
+
+  @Column({ type: 'enum', enum: MessageStatus, default: MessageStatus.SENT })
+  status: MessageStatus;
+
+  @Column()
+  message_id: string | null;
 
   @Column({ nullable: true })
   updated_at: Date;

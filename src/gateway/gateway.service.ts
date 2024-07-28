@@ -28,8 +28,6 @@ export class GatewayService
 {
   @WebSocketServer() server: Server;
 
-  private listenMessage: string = 'messageReceived';
-
   constructor(private messageService: MessagesService) {}
 
   afterInit(server: Server) {
@@ -53,13 +51,15 @@ export class GatewayService
       text: message.text,
       chat_id: message.chat_id,
       sender_id: message.sender_id,
+      message_id: message.message_id,
     };
     try {
       const responseMessage =
         await this.messageService.create(savingMessageData);
       socket
         .to([message.sender_id.toString(), message.receiver_id.toString()])
-        .emit(this.listenMessage, responseMessage);
+        .emit('messageReceived', responseMessage);
+      console.log(responseMessage);
     } catch (error) {
       console.error('Error sending message:', error);
     }
@@ -67,7 +67,9 @@ export class GatewayService
 
   @SubscribeMessage('join')
   onJoin(@MessageBody() userId: number, @ConnectedSocket() socket: Socket) {
-    socket.join(userId.toString());
+    if (userId) {
+      socket.join(userId.toString());
+    }
     console.log('Joined as ' + userId);
   }
 
