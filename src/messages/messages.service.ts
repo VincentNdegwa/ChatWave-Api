@@ -51,14 +51,12 @@ export class MessagesService {
         sent_at: new Date(),
         chat: { id: createMessageParams.chat_id },
         sender: { id: createMessageParams.sender_id },
+        message_id: createMessageParams.message_id,
       });
 
       const savedMessage = await this.messageRepository.save(newMessage);
       const retrievedMessage = await this.findOne(savedMessage.id);
-      return {
-        ...retrievedMessage,
-        data: { ...retrievedMessage.data, message_id: this.message_id },
-      };
+      return retrievedMessage;
     } catch (error) {
       return {
         error: true,
