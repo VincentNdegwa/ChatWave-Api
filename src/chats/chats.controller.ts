@@ -62,10 +62,12 @@ export class ChatsController {
     @Param('participantId') participantId: string,
     @Param('userId') userId: string,
   ) {
-    const response = await this.chatsService.deleteUserFromChat(
-      +participantId,
-      +userId,
-    );
-    return response;
+    if (participantId.trim() && userId.trim()) {
+      const response = await this.chatsService.deleteUserFromChat(
+        +participantId,
+        +userId,
+      );
+      return response;
+    }
   }
 }
