@@ -200,4 +200,17 @@ export class ChatsService {
       return { error: true, message: error.message, data: null };
     }
   }
+
+  async deleteUserFromChat(participantId: number, userId: number) {
+    const participant = this.participantRepository.findBy({
+      id: participantId,
+      user: { id: userId },
+    });
+    if (participant) {
+      await this.participantRepository.delete(participantId);
+      return { error: false, message: 'Chat deleted', data: null };
+    } else {
+      return { error: true, message: 'Chat or User not found', data: null };
+    }
+  }
 }
