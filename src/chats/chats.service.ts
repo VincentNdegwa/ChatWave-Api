@@ -7,6 +7,7 @@ import { createChatParams, createParticipantParams } from 'src/type';
 import { ParticipantsService } from 'src/participants/participants.service';
 import { Participant } from 'src/participants/entities/participant.entity';
 import { Message } from 'src/messages/entities/message.entity';
+import { ChatStatus } from 'src/participants/types';
 // import { ExtendedChat } from './chatInterface';
 
 @Injectable()
@@ -149,7 +150,7 @@ export class ChatsService {
   async getUserChats(user_id: number) {
     try {
       const participants = await this.participantRepository.find({
-        where: { user: { id: user_id } },
+        where: { user: { id: user_id }, status: ChatStatus.VISIBLE },
         relations: [
           'chat',
           'chat.participants',
@@ -202,15 +203,19 @@ export class ChatsService {
   }
 
   async deleteUserFromChat(participantId: number, userId: number) {
-    const participant = this.participantRepository.findBy({
-      id: participantId,
-      user: { id: userId },
-    });
-    if (participant) {
-      await this.participantRepository.delete(participantId);
-      return { error: false, message: 'Chat deleted', data: null };
+    const isUpdate = this.participantRepository.update(
+      { id: participantId, user: { id: userId } },
+      { status: ChatStatus.INVISIBLE },
+    );
+
+    if (isUpdate) {
+      return {
+        error: false,
+        message: 'User removed from chat',
+        data: { participantId: participantId, userId: userId },
+      };
     } else {
-      return { error: true, message: 'Chat or User not found', data: null };
+      return { error: true, message: 'User not found in chat', data: null };
     }
   }
 }
