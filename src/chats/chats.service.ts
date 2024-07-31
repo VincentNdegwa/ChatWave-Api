@@ -7,6 +7,7 @@ import { createChatParams, createParticipantParams } from 'src/type';
 import { ParticipantsService } from 'src/participants/participants.service';
 import { Participant } from 'src/participants/entities/participant.entity';
 import { Message } from 'src/messages/entities/message.entity';
+import { ChatStatus } from 'src/participants/types';
 // import { ExtendedChat } from './chatInterface';
 
 @Injectable()
@@ -149,7 +150,7 @@ export class ChatsService {
   async getUserChats(user_id: number) {
     try {
       const participants = await this.participantRepository.find({
-        where: { user: { id: user_id } },
+        where: { user: { id: user_id }, status: ChatStatus.VISIBLE },
         relations: [
           'chat',
           'chat.participants',
@@ -198,6 +199,54 @@ export class ChatsService {
       return { error: false, message: 'Chats retrieved', data: participants };
     } catch (error) {
       return { error: true, message: error.message, data: null };
+    }
+  }
+
+  async deleteUserFromChat(participantId: number, userId: number) {
+    const isUpdate = this.participantRepository.update(
+      { id: participantId, user: { id: userId } },
+      { status: ChatStatus.INVISIBLE },
+    );
+
+    if (isUpdate) {
+      const participant = await this.participantRepository.findOne({
+        where: { id: participantId, user: { id: userId } },
+        relations: ['chat'],
+      });
+      console.log(participant);
+
+      if (participant) {
+        const chats = await this.participantRepository.findBy({
+          chat: { id: participant.chat.id },
+        });
+
+        const invisibleParticipants = chats.filter(
+          (x) => x.status == ChatStatus.INVISIBLE,
+        );
+
+        console.log(
+          `invisible length ${invisibleParticipants.length} vs chats length ${chats.length}`,
+        );
+
+        if (invisibleParticipants.length == chats.length) {
+          const invisibleParticipantsIds = invisibleParticipants.map(
+            (x) => x.id,
+          );
+          console.log('ids of the user to delete' + invisibleParticipantsIds);
+
+          await this.participantRepository.delete(invisibleParticipantsIds);
+          await this.messageRepository.delete({
+            chat: { id: participant.chat.id },
+          });
+        }
+      }
+      return {
+        error: false,
+        message: 'User removed from chat',
+        data: { participantId: participantId, userId: userId },
+      };
+    } else {
+      return { error: true, message: 'User not found in chat', data: null };
     }
   }
 }
