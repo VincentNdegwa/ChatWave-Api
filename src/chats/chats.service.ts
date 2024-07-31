@@ -209,6 +209,37 @@ export class ChatsService {
     );
 
     if (isUpdate) {
+      const participant = await this.participantRepository.findOne({
+        where: { id: participantId, user: { id: userId } },
+        relations: ['chat'],
+      });
+      console.log(participant);
+
+      if (participant) {
+        const chats = await this.participantRepository.findBy({
+          chat: { id: participant.chat.id },
+        });
+
+        const invisibleParticipants = chats.filter(
+          (x) => x.status == ChatStatus.INVISIBLE,
+        );
+
+        console.log(
+          `invisible length ${invisibleParticipants.length} vs chats length ${chats.length}`,
+        );
+
+        if (invisibleParticipants.length == chats.length) {
+          const invisibleParticipantsIds = invisibleParticipants.map(
+            (x) => x.id,
+          );
+          console.log('ids of the user to delete' + invisibleParticipantsIds);
+
+          await this.participantRepository.delete(invisibleParticipantsIds);
+          await this.messageRepository.delete({
+            chat: { id: participant.chat.id },
+          });
+        }
+      }
       return {
         error: false,
         message: 'User removed from chat',
