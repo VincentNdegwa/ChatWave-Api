@@ -123,7 +123,11 @@ export class ChatsService {
   async getUserChatsMessages(user_id: number, chat_id: number) {
     try {
       const participant = await this.participantRepository.findOne({
-        where: { chat: { id: chat_id }, user: { id: user_id } },
+        where: {
+          chat: { id: chat_id },
+          user: { id: user_id },
+          status: ChatStatus.VISIBLE,
+        },
         relations: [
           'chat',
           'chat.participants',
