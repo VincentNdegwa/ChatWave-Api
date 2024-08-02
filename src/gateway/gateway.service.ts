@@ -15,6 +15,7 @@ import { MessagesService } from 'src/messages/messages.service';
 import { newMessageDto } from './types/new-message.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { UseGuards } from '@nestjs/common';
+import { Participant, callUserParticipant } from './types/callUserParticipant';
 
 @WebSocketGateway({
   cors: {
@@ -76,13 +77,15 @@ export class GatewayService
   @SubscribeMessage('call-user')
   handleCallUser(
     @ConnectedSocket() client: Socket,
-    @MessageBody() payload: { receiver_id: number; sender_id: number },
+    @MessageBody() payload: callUserParticipant,
   ) {
     try {
-      const { receiver_id, sender_id } = payload;
+      const { sender, receiver } = payload;
 
-      client.to(receiver_id.toString()).emit('call-user', payload);
-      console.log('Calling user ' + payload.receiver_id);
+      client.to(receiver.user.id.toString()).emit('call-user', payload);
+      console.log(
+        `Call from ${receiver.user.phone_number} to ${sender.user.phone_number}`,
+      );
     } catch (error) {
       console.error('Error in handleCallUser:', error);
     }
