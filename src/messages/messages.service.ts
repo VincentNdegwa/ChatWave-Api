@@ -3,11 +3,12 @@ import { UpdateMessageDto } from './dto/update-message.dto';
 import { createMessageParams } from 'src/type';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Message } from './entities/message.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { ChatsService } from 'src/chats/chats.service';
 import { UsersService } from 'src/users/users.service';
 import { ParticipantsService } from 'src/participants/participants.service';
 import { chatAndUserDto } from 'src/participants/dto/chat-and-user.dto';
+import { ReadStatus } from './types';
 
 @Injectable()
 export class MessagesService {
@@ -133,6 +134,19 @@ export class MessagesService {
       }
     } catch (error) {
       return { error: true, message: error.message, data: null };
+    }
+  }
+
+  async read(mesageIds: string[]) {
+    const integerIds: number[] = mesageIds.map((x) => Number(x));
+    const messages = await this.messageRepository.update(
+      { id: In(integerIds) },
+      { read_status: ReadStatus.READ },
+    );
+    if (messages.affected) {
+      return { error: false, message: 'Read', messageIds: integerIds };
+    } else {
+      return { error: true, message: 'Message not updated', data: null };
     }
   }
 }
