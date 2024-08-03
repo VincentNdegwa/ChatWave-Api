@@ -1,7 +1,7 @@
 import { Chat } from 'src/chats/entities/chat.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { MessageStatus } from '../types';
+import { MessageStatus, ReadStatus } from '../types';
 
 @Entity({ name: 'messages' })
 export class Message {
@@ -16,6 +16,9 @@ export class Message {
 
   @Column({ type: 'enum', enum: MessageStatus, default: MessageStatus.SENT })
   status: MessageStatus;
+
+  @Column({ type: 'enum', default: ReadStatus.UNREAD, enum: ReadStatus })
+  read_status: ReadStatus;
 
   @Column()
   message_id: string | null;

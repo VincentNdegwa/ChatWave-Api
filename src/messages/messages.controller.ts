@@ -48,4 +48,10 @@ export class MessagesController {
     const response = await this.messagesService.remove(+id);
     return response;
   }
+
+  @Post('read')
+  async read(@Body() mesageIds: (string | number)[]) {
+    const response = await this.messagesService.read(mesageIds);
+    return response;
+  }
 }

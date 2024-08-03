@@ -100,4 +100,22 @@ export class GatewayService
 
     client.to(payload.to).emit('call-accepted', { peerId: payload.peerId });
   }
+
+  @SubscribeMessage('readMessage')
+  async handleReadMessage(
+    @ConnectedSocket() client: Socket,
+    @MessageBody()
+    payload: {
+      senderId: string | number;
+      chatId: string | number;
+      messageIds: (number | string)[];
+    },
+  ) {
+    if (payload.messageIds.length > 0) {
+      const response = await this.messageService.read(payload.messageIds);
+      if (!response.error) {
+        client.to(payload.senderId.toString()).emit('readMessage', payload);
+      }
+    }
+  }
 }

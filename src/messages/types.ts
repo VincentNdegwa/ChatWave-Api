@@ -4,3 +4,8 @@ export enum MessageStatus {
   DELIVERED = 'delivered',
   SENDING = 'sending',
 }
+
+export enum ReadStatus {
+  READ = 'read',
+  UNREAD = 'unread',
+}
