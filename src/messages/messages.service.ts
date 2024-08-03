@@ -137,7 +137,7 @@ export class MessagesService {
     }
   }
 
-  async read(mesageIds: string[]) {
+  async read(mesageIds: (string | number)[]) {
     const integerIds: number[] = mesageIds.map((x) => Number(x));
     const messages = await this.messageRepository.update(
       { id: In(integerIds) },

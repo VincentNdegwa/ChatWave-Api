@@ -50,7 +50,7 @@ export class MessagesController {
   }
 
   @Post('read')
-  async read(@Body() mesageIds: string[]) {
+  async read(@Body() mesageIds: (string | number)[]) {
     const response = await this.messagesService.read(mesageIds);
     return response;
   }

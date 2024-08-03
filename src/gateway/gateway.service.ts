@@ -106,14 +106,16 @@ export class GatewayService
     @ConnectedSocket() client: Socket,
     @MessageBody()
     payload: {
-      senderId: string;
-      chatId: string;
-      messageIds: string[];
+      senderId: string | number;
+      chatId: string | number;
+      messageIds: (number | string)[];
     },
   ) {
-    const response = await this.messageService.read(payload.messageIds);
-    if (!response.error) {
-      client.to(payload.senderId).emit('readMessage', payload);
+    if (payload.messageIds.length > 0) {
+      const response = await this.messageService.read(payload.messageIds);
+      if (!response.error) {
+        client.to(payload.senderId.toString()).emit('readMessage', payload);
+      }
     }
   }
 }
