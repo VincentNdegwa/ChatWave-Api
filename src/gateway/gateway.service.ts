@@ -57,10 +57,9 @@ export class GatewayService
     try {
       const responseMessage =
         await this.messageService.create(savingMessageData);
-      socket
-        .to([message.sender_id.toString(), message.receiver_id.toString()])
+      this.server
+        .in([message.sender_id.toString(), message.receiver_id.toString()])
         .emit('messageReceived', responseMessage);
-      console.log(responseMessage);
     } catch (error) {
       console.error('Error sending message:', error);
     }
@@ -96,8 +95,6 @@ export class GatewayService
     @ConnectedSocket() client: Socket,
     @MessageBody() payload: { to: string; peerId: string },
   ) {
-    console.log(payload);
-
     client.to(payload.to).emit('call-accepted', { peerId: payload.peerId });
   }
 
